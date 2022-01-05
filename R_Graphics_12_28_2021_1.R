@@ -96,3 +96,31 @@ ggplot(heightweight, aes(x = ageYear, y = heightIn, shape = sex)) +
 
 hw <- heightweight %>%
   mutate(weightgroup = ifelse(weightLb < 100, "< 100", ">= 100"))
+
+ggplot(hw, aes(x = ageYear, y = heightIn, shape = sex, fill = weightgroup))+
+  geom_point(size = 2.5) +
+  scale_shape_manual(values = c(21, 24)) +
+  scale_fill_manual(values = c(NA, "black"), 
+  guide = guide_legend(override.aes = list(shape = 21)))
+
+ggplot(heightweight, aes(x = ageYear, y = heightIn, colour = weightLb)) +
+  geom_point()
+
+range(heightweight$weightLb)
+
+ggplot(heightweight, aes(x = ageYear, y=heightIn, size=weightLb)) +
+  geom_point() +
+  scale_size_continuous(range = size_range)
+
+diamonds_sp <- ggplot(diamonds, aes(x = carat, y = price))
+
+diamonds_sp + 
+   geom_point()
+
+diamonds_sp +
+  stat_bin2d()
+
+diamonds_sp +
+  stat_bin2d(bins = 50) +
+  scale_fill_gradient(low = "lightblue", high = "red", limits = c(0, 6000))
+
