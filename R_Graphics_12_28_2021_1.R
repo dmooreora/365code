@@ -124,3 +124,14 @@ diamonds_sp +
   stat_bin2d(bins = 50) +
   scale_fill_gradient(low = "lightblue", high = "red", limits = c(0, 6000))
 
+cw_sp <- ggplot(ChickWeight, aes(x = Time, y = weight))
+
+cw_sp + 
+  geom_point()
+
+cw_sp +
+  geom_point(position = position_jitter(width = .5, height = 0))
+
+cw_sp + 
+  geom_boxplot(aes(group = Time))
+
