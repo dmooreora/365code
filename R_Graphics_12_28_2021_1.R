@@ -332,3 +332,85 @@ ggplot(faithful, aes(x = waiting)) +
   geom_line(stat = "density") +
   geom_line(stat = "density", adjust = .25, colour = "red") +
   geom_line(stat = "density", adjust = 2, colour = "blue")
+
+ggplot(faithful, aes(x = waiting)) +
+  geom_density(fill = "blue", alpha = .2) +
+  xlim(35, 105)
+
+ggplot(faithful, aes(x = waiting)) +
+  geom_density(fill = "blue", alpha = .2, colour = NA) +
+  xlim(35, 105) +
+  geom_line(stat = "density")
+
+ggplot(faithful, aes(x = waiting, y = ..density..)) +
+  geom_histogram(fill = "cornsilk", colour = "grey60", size = .2) +
+  geom_density() +
+  xlim(35, 105)
+
+library(MASS)
+
+birthwt_mod <- birthwt %>%
+  mutate(smoke = as.factor(smoke))
+
+ggplot(birthwt_mod, aes(x = bwt, colour = smoke)) +
+  geom_density()
+
+ggplot(birthwt_mod, aes(x = bwt, fill = smoke)) +
+  geom_density(alpha = .3)
+
+ggplot(birthwt_mod, aes(x = bwt)) +
+  geom_density() +
+  facet_grid(smoke ~ .)
+
+levels(birthwt_mod$smoke)
+
+birthwt_mod$smoke <- recode(birthwt_mod$smoke, '0' = 'No Smoke', '1' = 'Smoke')
+
+ggplot(birthwt_mod, aes(x = bwt)) +
+  geom_density() +
+  facet_grid(smoke ~ .)
+
+ggplot(birthwt_mod, aes(x = bwt, y = ..density..)) +
+  geom_histogram(binwidth = 200, fill = "cornsilk", colour = "grey60", size = .2) +
+  geom_density() +
+  facet_grid(smoke ~ .)
+
+ggplot(faithful, aes(x=waiting)) +
+  geom_freqpoly() 
+
+ggplot(faithful, aes(x = waiting)) +
+  geom_freqpoly(binwidth = 4)
+
+binsize <- diff(range(faithful$waiting))/15
+ggplot(faithful, aes(x = waiting)) +
+  geom_freqpoly(binwidth = binsize)
+
+
+ggplot(birthwt, aes(x = factor(race), y = bwt)) +
+  geom_boxplot()
+
+ggplot(birthwt, aes(x = factor(race), y = bwt)) +
+  geom_boxplot(width = .5)
+
+ggplot(birthwt, aes(x = factor(race), y = bwt)) +
+  geom_boxplot(outlier.size = 1.5, outlier.shape = 21)
+
+ggplot(birthwt, aes(x = 1, y = bwt)) +
+  geom_boxplot() +
+  scale_x_continuous(breaks = NULL) +
+  theme(axis.title.x = element_blank())
+
+ggplot(birthwt, aes(x = factor(race), y = bwt)) +
+  geom_boxplot(notch = TRUE)
+
+ggplot(birthwt, aes(x = factor(race), y = bwt)) +
+  geom_boxplot() +
+  stat_summary(fun.y = "mean", geom = "point", shape = 23, size = 3, fill = "white")
+
+hw_p <- ggplot(heightweight, aes(x = sex, y = heightIn))
+
+hw_p + geom_violin()
+
+ggplot(heightweight, aes(x = sex, y = heightIn)) +
+  geom_boxplot(outlier.colour = NA, width = .4) +
+  geom_dotplot(binaxis = "y", binwidth = .5, stackdir = "center", fill=NA)
