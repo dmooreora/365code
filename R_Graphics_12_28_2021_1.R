@@ -274,3 +274,61 @@ pairs(
    diag.panel = panel.hist,
    lower.panel = panel.smooth
 )
+
+panel.lm <- function(x, y, col = par("col"), bg = NA, pch = par("pch"),
+                     cex = 1, col.smooth = "black",...) {
+  points(x, y, pch = pch, col = col, bg = bg, cex = cex)
+  abline(stats::lm(y ~ x), col = col.smooth, ...)
+}
+
+pairs(
+  c2009,
+  upper.panel = panel.cor,
+  diag.panel = panel.hist,
+  lower.panel = panel.smooth,
+  pch = "."
+)
+
+ggplot(faithful, aes(x = waiting)) +
+  geom_histogram()
+
+w <- faithful$waiting
+
+ggplot(NULL, aes(x = w)) +
+  geom_histogram()
+
+library(MASS)
+
+ggplot(birthwt, aes(x = bwt)) +
+  geom_histogram(fill = "white", colour = "black") +
+  facet_grid(smoke ~ .)
+
+birthwt_mod <- birthwt
+
+birthwt_mod$smoke <- recode_factor(birthwt_mod$smoke, 
+                                    '0' = 'No Smoke',
+                                    '1' = 'Smoke')
+
+ggplot(birthwt_mod, aes(x = bwt)) +
+  geom_histogram(fill = "white", colour = "black") +
+  facet_grid(smoke ~ .)
+
+ggplot(birthwt_mod, aes(x = bwt, fill = smoke)) +
+  geom_histogram(position = "identity", alpha = 0.4)
+
+ggplot(faithful, aes(x = waiting)) +
+  geom_density()
+
+ggplot(faithful, aes(x = waiting)) +
+  geom_line(stat = "density") +
+  expand_limits(y = 0)
+
+w <- faithful$waiting
+
+ggplot(NULL, aes(x = w)) +
+  geom_density()
+
+ggplot(faithful, aes(x = waiting)) +
+  geom_line(stat = "density") +
+  geom_line(stat = "density", adjust = .25, colour = "red") +
+  geom_line(stat = "density", adjust = 2, colour = "blue")
