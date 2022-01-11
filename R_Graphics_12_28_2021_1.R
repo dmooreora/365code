@@ -414,3 +414,23 @@ hw_p + geom_violin()
 ggplot(heightweight, aes(x = sex, y = heightIn)) +
   geom_boxplot(outlier.colour = NA, width = .4) +
   geom_dotplot(binaxis = "y", binwidth = .5, stackdir = "center", fill=NA)
+
+ggplot(heightweight, aes(x = sex, y = heightIn)) +
+  geom_boxplot(aes(x = as.numeric(sex) + .2, group = sex), width = .25) +
+  geom_dotplot(aes(x = as.numeric(sex) - .2, group = sex),
+               binaxis = "y",
+               binwidth = .5,
+               stackdir = "center") +
+  scale_x_continuous(
+    breaks = 1:nlevels(heightweight$sex),
+    labels = levels(heightweight$sex)
+  )
+
+faithful_p <-ggplot(faithful, aes(x = eruptions, y = waiting)) 
+
+faithful_p + 
+  geom_point() +
+  stat_density2d()
+
+faithful_p +
+  stat_density2d(aes(colour = ..level..))
