@@ -688,3 +688,45 @@ hw_plot +
     strip.text.y = element_text(size = 14, angle = -90, face = "bold")
   )
   
+mpg_plot <-- ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point()
+
+mpg_plot + facet-gid(drv ~ .)
+
+mpg_plot + facet_grid(. ~ cyl)
+
+mpg_plot + facet_grid(drv ~ cyl)
+
+mpg_plot + facet_wrap( ~ class)
+
+# Colour blind virdis color palette.  Implement for data that is both continous and discrete in nature.
+
+uspopage_plot <- ggplot(uspopage, aes(x = Year, y = Thousands, fill = AgeGroup)) +
+  geom_area()
+
+uspopage_plot + 
+  scale_fill_viridis_d()
+
+climate_mod <- climate %>%
+  filter(Source == "Berkeley") %>%
+  mutate(valence = if_else(Anomaly10y >= 0, "pos", "neg"))
+
+ggplot(climate_mod, aes(x = Year, y = Anomaly10y)) +
+  geom_area(aes(fill = valence)) +
+  geom_line() +
+  geom_hline(yintercept = 0)
+
+
+mcor <- cor(mtcars)
+
+round(mcor, digits = 2)
+
+library(corrplot)
+corrplot(mcor)
+
+corrplot(mcor, method = "shade", shade.col = NA, tl.co1 = "black", tl.srt = 45)
+
+co1 <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#477AA"))
+
+corrplot(mcor, method = "shade", shade.co1 = NA, t1.co1 = "black", t1.srt = 45,
+         co1 = co1(200), addCoef.co1 = "black", c1.pos = "n", order = "AOE")
