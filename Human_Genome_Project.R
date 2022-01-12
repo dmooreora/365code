@@ -3,9 +3,10 @@
 #===========   Association Rules and Recommender Systems =====================
 #=============================================================================
 
-#setwd("c:/dev/genome")
-#setwd("/root/Documents/R")
-setwd("/media/DriveA/Development/Dev/Genome/combine/result_variation/snp")
+setwd("c:/dev/genome")
+if (!require("BiocManager", quietly = TRUE))
+	install.packages("BiocManager")
+BiocManager::install()
 
 if (!requireNamespace("BiocManager", quietly = TRUE))
 	install.packages("BiocManager")
@@ -68,8 +69,7 @@ library(Rsamtools)
 library(ggrepel)
 install.packages("factoextra")
 library(factoextra)
-install.packages("caTools")
-library(caTools)
+
 
 list <- c(42,79,86,85,35,27,87,7,25,84,85,44,124,25,83,85,84,31,40)
 
@@ -91,8 +91,8 @@ fdta_sample_a$Patient <- "2A"
 summary(fdta_sample_a)
 system.time(write.csv(fdta_sample_a,'out_210821_M105_V350019556_L03_B5GHUMehuxRAABA-509_2.csv',row.names=FALSE))
 
-#Single Nucleotide Polymorism Variations
-vcf_file <- read.vcfR('combine.snp.vcf.gz',verbose=FALSE)
+#Insert Delete Variations
+vcf_file <- read.vcfR('D:/result/combine/result_variation/indel/combine.indel.vcf.gz',verbose=FALSE)
 str(vcf_file)
 head(vcf_file,10)
 chrom <- create.chromR(name='Supercontig',vcf=vcf_file,seq=dna,ann=gff)
@@ -563,3 +563,14 @@ ggplot(my_mtcars, aes(x=mpg, y=hp)) +
 	geom_text_repel(aes(label = model), force = 5)
 
 
+pred <- predict.glm()
+
+library(igraph)
+
+gd <- graph(c(1,2, 2,3, 2,4, 1,4, 5,5, 3,6))
+plot(gd)
+
+gu <- graph(c(1,2, 2,3, 2,4, 1,4, 5,5, 3,6))
+plot(gu, vertex.label = NA)
+set.seed(229)
+plot(gu)
