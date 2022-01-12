@@ -434,3 +434,257 @@ faithful_p +
 
 faithful_p +
   stat_density2d(aes(colour = ..level..))
+
+faithful_p +
+  stat_density2d(aes(fill = ..density..), 
+                 geom = "raster",
+                 contour = FALSE,
+                 h = c(.5, 5)
+  ) 
+
+p <- ggplot(faithful, aes(x = eruptions, y = waiting)) +
+  geom_point()
+
+p + 
+  annotate("text", x=3, y=48, label = "Group 1") +
+  annotate("text", x=4.5, y=66, label = "Group 2" )
+
+p <- ggplot(data.frame(x = c(-3,3)), aes(x = x)) +
+  stat_function(fun = dnorm)
+
+p + annotate("text", x = 2, y = 0.3, parse = TRUE,
+             label = "frac(1, sqrt(2 * pi)) * e ^ {-x^2 / 2 }")
+
+p + annotate("text", x = 0, y = 0.05, parse = TRUE, size =4,
+             label = "'Function: ' * y==frac(1, sqrt(2*pi)) * e^{-x^2/2}")
+
+hw_plot <- ggplot(heightweight, aes(x = ageYear, y = heightIn,
+colour = sex)) +
+  geom_point()
+
+hw_plot +
+  geom_hline(yintercept = 60) +
+  geom_vline(xintercept = 14)
+
+hw_plot + 
+  geom_abline(intercept = 37.4, slope = 1.73)
+
+hw_plot <- ggplot(heightweight, aes(x=ageYear, y=heightIn,
+                                    colour=sex)) +
+                                    geom_point()
+
+hw_plot +
+  geom_hline(yintercept = 60) +
+  geom_vline(xintercept = 14)
+
+hw_means <- heightweight %>%
+  group_by(sex) %>%
+  summarise(heightIn = mean(heightIn))
+
+hw_means
+
+hw_plot +
+  geom_hline(
+    data = hw_means,
+    aes(yintercept = heightIn, colour = sex),
+    linetype = "dashed",
+    size = 1
+  )
+
+p <- ggplot(filter(climate, Source == "Berkeley"),
+            aes(x = Year, y = Anomaly10y)) +
+  geom_line()
+
+p + annotate("segment", x= 1950, xend = 1980, y = -.25, yend = -.25)
+
+library(grid)
+
+p + annotate("segment", x = 1850, xend = 1820, y = -.8, yend = -.95,
+             colour = "blue", size = 2, arrow = arrow()) +
+  annotate("segment", x = 1950, xend = 1980, y = -.25, yend = -.25,
+           arrow = arrow(ends = "both", angle = 90, length = unit(.2, "cm")))
+
+p <- ggplot(filte(client, Source == "Berkeley"),
+            aes(x = Year, y = Anomaly10y)) +
+  geom_line()
+
+p + annotate("rect", xmin = 1950, xmax = 1980, ymin = -1, ymax = 1,
+             alpha = .1, fill = "blue")
+
+pg_mod <- PlantGrowth %>%
+  mutate(h1 = recode(group, "ctrl" = "no", "trt1" = "no", "trt2" = "yes"))
+
+ggplot(pg_mod, aes(x = group, y = weight, fill = h1)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("grey85","#FFDDCC"), guide = FALSE)
+  
+ce_mod <- cabbage_exp %>%
+  filter(Cultivar == "c39")
+
+ggplot(ce_mod, aes(x = Date, y = Weight)) +
+  geom_col(fill = "white", colour = "black") +
+  geom_errorbar(aes(ymin = Weight - se, ymax = Weight + se),
+  width = .2)
+
+ggplot(ce_mod, aes(x = Date, y = Weight)) +
+  geom_line(aes(group = 1)) +
+  geom_point(size = 4) +
+  geom_errorbar(aes(ymin = Weight -se, ymax = Weight + se),
+  width = .2)
+
+ggplot(cabbage_exp, aes(x=Date, y=Weight, fill=Cultivar)) +
+  geom_col(position = "dodge") +
+  geom_errorbar(aes(ymin = Weight - se, ymax = Weight + se), 
+                position = "dodge", width = .2)
+
+ggplot(cabbage_exp, aes(x = Date, y = Weight, fill = Cultivar)) +
+  geom_col(position = "dodge") +
+  geom_errorbar(aes(ymin = Weight - se, ymax = Weight + se),
+                position = position_dodge(0,9, width = .2))
+
+pd <- position_dodge(.3)
+
+ggplot(cabbage_exp, aes(x = Date, y = Weight, colour = Cultivar, group = Cultivar)) +
+  geom_errorbar(aes(ymin = Weight - se, ymax = Weight + se),
+                width = .2,
+                size = 0.25,
+                colour = "black",
+                position = pd
+                ) +
+  geom_line(position = pd) +
+  geom_point(position = pd, size = 2.5)
+
+
+mpg_plot <- ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point() +
+  facet_grid(. ~ drv)
+
+f_labels <- data.frame(drv = c("4", "f", "r"), lbel = c("4wd", "Front", "Rear"))
+
+mpg_plot + 
+  geom_text(x = 6, y = 40, aes(label = label), data = f_labels)
+
+mpg_plot +
+  annotate("text", x = 6, y = 42, label = "label text")
+
+lm_labels <- function(dat) {
+  mod <- lm(hwy ~ displ, data = dat)
+  formula <- sprintf("italic(y) == %.2f %.2f * italic(x)", 
+                     round(coef(mod)[1], 2), round(coef(mod)[2],2))
+r <- cor(dat$displ, dat$hwy)
+r2 <- sprintf("italic(R^2) == %.2f", r^2)
+data.frame(formula = formula, r2 = r2, stringsAsFactors = FALSE)
+}
+
+labels <- mpg %>%
+  group_by(drv) %>%
+  do(lm_labels(.))
+
+labels
+
+mpg_plot +
+  geom_smooth(method = lm, se = FALSE) +
+  geom_text(data = labels, aes(label = formula), x = 3, y = 40, parse = TRUE, hjust = 0) +
+  geom_text(x = 3, y =35, aes(label = r2), data = labels, parse = TRUE, hjust = 0)
+
+hw_plot <- ggplot(heightweight, aes(x = ageYear, y = heightIn)) +
+  geom_point()
+
+hw_plot +
+  theme(axis.line = element_line(colour = "black"))
+
+hw_plot +
+  theme_bw() +
+  theme(panel.border = element_blank(), 
+        axis.line = element_line(colour = "black"))
+
+hw_plot +
+  theme_bw() +
+  theme(
+    panel.border = element_black(),
+    axis.line = element_line(colour = "black", size = 4)
+  )
+
+hw_plot + 
+  theme_bw() +
+  theme(
+    panel.border = element_blank(),
+    axis.line = element_line(colour = "black", size = 4, lineend = "square")
+  )
+
+ggplot(wind, aes(x = DirCat, fill = SpeedCat)) +
+  geom_histogram(binwidth = 15, boundary = -7.5) +
+  coord_polar() +
+  scale_x_continuous(limits = c(0, 360))
+
+ggplot(wind, aes(x = DirCat, fill = SpeedCat)) +
+  geom_histogram(binwidth = 15, boundary = -7.5, colour = "black", size = .25) +
+  guides(fill = guide_legend(reverse = TRUE)) +
+  scale_x_continuous(limits = c(0, 360),
+                     breaks = seq(0, 360, by = 45),
+                     minor_breaks = seq(0, 360, by = 15)) +
+  scale_fill_brewer()
+
+ggplot(wind, aes(x = DirCat, fill = SpeedCat)) +
+  geom_histogram(binwidth = 15, boundary = -7.5, colour = "black", size = .25) +
+  guides(fill = guide_legend(reverse = TRUE)) +
+  coord_polar() + 
+  scale_x_continuous(limits = c(0, 360),
+                     breaks = seq(0, 360, by = 45),
+                     minor_breaks = seq(0, 360, by = 15)) +
+  scale_fill_brewer()
+
+mdeaths_mod <- data.frame(
+  deaths = as.numeric(mdeaths),
+  month = as.numeric(cycle(mdeaths))
+)
+
+mdeaths_mod
+
+mdeaths_plot <- ggplot(mdeaths_mod, aes(x = month, y = deaths)) +
+  geom_line() +
+  scale_x_continuous(breaks = 1:12)
+
+mdeaths_plot + coord_polar() +
+  ylim(0, max(mdeaths_mod$deaths)) +
+  xlim(0, 12)
+
+
+mdeaths_x <- mdeaths_mod[mdeaths_mod$month==12,]
+mdeaths_x$month <- 0
+mdeaths_new <- rbind(mdeaths_x, mdeaths_mod)
+
+hw_plot <- ggplot(heightweight, aes(x = ageYear, y = heightIn, colour = sex)) +
+  geom_point()
+
+hw_plot + 
+  theme(panel.grid.major = element_line(colour = "red"),
+        panel.grid.minor = element_line(colour = "red", linetype = "dashed", size = 0.2),
+        panel.background = element_rect(fill = "lightblue"),
+        panel.border = element_rect(colour = "blue", fill = NA, size = 2)
+        )
+
+hw_plot +
+  theme(
+    legend.background = element_rect(fill = "grey85", colour = "red", size = 1),
+    legend.title = element_text(colour = "blue", face = "bold", size = 14),
+    legend.text = element_text(colour = "red"),
+    legend.key = element_rect(colour = "blue", size = 0.25))
+
+hw_plot + 
+ggtitle("Plot title here") +
+  theme(
+    axis.title.x = element_text(colour = "red", size =14),
+    axis.text.x = element_text(colour = "blue"),
+    axis.title.y = element_text(colour = "red", size = 14, angle = 90),
+    axis.text.y = element_text(colour = "blue"),
+    plot.title = element_text(colour = "red", size = 20, face = "bold")
+  )
+
+hw_plot +
+  facet_grid(sex ~ .) +
+  theme(
+    strip.background = element_rect(fill = "pink"),
+    strip.text.y = element_text(size = 14, angle = -90, face = "bold")
+  )
+  
