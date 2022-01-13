@@ -574,3 +574,73 @@ gu <- graph(c(1,2, 2,3, 2,4, 1,4, 5,5, 3,6))
 plot(gu, vertex.label = NA)
 set.seed(229)
 plot(gu)
+
+library(gcookbook)
+madmen2
+
+g <- graph.data.frame(madmen2, directed=TRUE)
+par(mar = c(0,0,0,0))
+plot(g, layout = layout.fruchterman.reingold, vertex.size = 8, edge.arrow.size = 0.5, vertex.label = NA)
+
+g <- graph.data.frame(madmen2, directed = FALSE)
+par(mar = c(0,0,0,0))
+
+plot(g, layout = layout.circle, vertex.size = 8, vertex.label = NA)
+
+m <- madmen[1:nrow(madmen) %% 2 == 1, ]
+
+g <- graph.data.frame(m, directed=FALSE)
+
+g <- graph.data.frame(m, directed=FALSE)
+
+V(g)$name
+
+plot(g, layout=layout.fruchterman.reingold, 
+	 vertex.size =4,
+	 vertex.label = V(g)$name,
+	 vertex.label.cex = 0.8,
+	 vertex.label.dist = 0.4,
+	 vertex.label.color = "black")
+
+V(g)$size <- 4
+V(g)$label <- V(g)$name
+V(g)$label <- 0.8
+V(g)$label <- 0.4
+V(g)$label.color <- "black"
+
+g$layout <- layout.fruchterman.reingold
+
+plot(g)
+
+E(g)
+
+E(g)[c(2,11,19)]$label <- "M"
+
+E(g)$color <- "grey70"
+E(g)[c(2,11,19)]$color <- "red"
+
+plot(g)
+
+presidents
+str(presidents)
+
+pres_rating <- data.frame(
+	rating = as.numeric(presidents),
+	year = as.numeric(floor(time(presidents))),
+	quarter = as.numeric(cycle(presidents))
+
+)
+
+p <- ggplot(pres_rating, aes(x = year, y = quarter, fill = rating))
+
+p + geom_tile()
+
+p + geom_raster()
+
+p + geom_tile() + scale_x_continuous(breaks = seq(1940, 1976, by = 4), expand = c(0,0)) +
+	scale_y_reverse(expand = c(0,0)) +
+	scale_fill_gradient2(midpoint = 50, mid = "grey70", limits = c(0, 100))
+
+install.packages("rgl")
+library(rgl)
+plot3d(mtcars$w4, mtcars$disp, mtcars$mpg, type = "s", size = 0.75, lit = FALSE)
