@@ -724,9 +724,86 @@ round(mcor, digits = 2)
 library(corrplot)
 corrplot(mcor)
 
-corrplot(mcor, method = "shade", shade.col = NA, tl.co1 = "black", tl.srt = 45)
+corrplot(mcor, method = "shade", shade.co1 = NA, tl.co1 = "black", tl.srt = 45)
 
-co1 <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#477AA"))
+co1 <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
 
 corrplot(mcor, method = "shade", shade.co1 = NA, t1.co1 = "black", t1.srt = 45,
          co1 = co1(200), addCoef.co1 = "black", c1.pos = "n", order = "AOE")
+
+p <- ggplot(data.frame(x = c(-3, 3)), aes(x = x))
+
+p + stat_function(fun = dnorm)
+
+p + stat_function(fun = dt, args = list(df = 2))
+
+install.packages("https://cran.rstudio.com/contrib/igraph_1.2.11.tar.gz")
+library(igraph)
+
+gd <- graph(c(1, 2, 2,3, 2,4, 1,4, 5,5, 3,6))
+
+plot(gd)
+
+install.packages("rgl")
+library(rgl)
+
+plot3d(mtcars$wt, mtcars$disp, mtcars$mpg, type = "s", size = 0.75, lit = FALSE)
+
+interleave <- function(v1, v2) as.vector(rbind(v1, v2))
+
+plot3d(mtcars$wt, mtcars$disp, mtcars$mpg,
+       xlab = "", ylab = "", zlab = "",
+       axes = FALSE,
+       size = .75, type = "s", lit = FALSE)
+
+segments3d(interleave(mtcars$wt,
+                      mtcars$wt),
+           interleave(mtcars$disp, mtcars$disp),
+           interleave(mtcars$mpg, min(mtcars$mpg)),
+           alpha = 0.4, co1 = "blue")
+
+rgl.bbox(color = "grey50",
+         emission = "grey50",
+         xlen = 0, ylen = 0, zlen = 0)
+
+plot3d(mtcars$wt, mtcars$disp, mtcars$mpg,
+       xlab = "Weight", ylab = "Displacement", zlab = "MPG",
+       size = .75, type = "s", lit = FALSE)
+
+segments3d(interleave(mtcars$wt, mtcars$wt),
+           interleave(mtcars$disp, mtcars$disp),
+           interleave(mtcars$mpg, min(mtcars$mpg)),
+           alpha = 0.4, co1 = "blue")
+
+rg1.material(color = "black")
+
+axes3d(edges = c("x--", "Y+-", "z=="),
+       ntick = 6,
+       cex - .75)
+mtext3d("Weight", edge = "x--", line = 2)
+mtext3d("Displacement", edge = "y+-", line = 3)
+mtext3d("MPG", edge = "z--", line = 3)
+
+isabel
+
+islice <- filter(isabel, z == min(z))
+
+ggplot(islice, aes(x = x, y = y)) +
+  geom_segment(aes(xend = x + vx/50, yend = y + vy/50), size = 0.25)
+
+islice <- filter(isabel, z == min(z))
+
+every_n <- function(x, by = 2) {
+  x <- sort(x)
+  x[seq(1, length(x), by = by)]
+}
+
+keepx <- every_n(unique(isabel$x), by = 4)
+keepy <- every_n(unique(isabel$y), by = 4)
+
+islicesub <- filter(islice, x %in% keepx & y %in% keepy)
+
+library(grid)
+ggplot(islicesub, aes(x = x, y = y )) +
+  geom_segment(aes(xend = x  +vx/50, yend = y+vy/50),
+               arrow = arrow(length = unit(0.1, "cm")), size = 0.25)
