@@ -102,3 +102,11 @@ ggplot(crimes, aes(map_id = state, fill = Assault_q)) +
 	labs(fill = "Assault Rate\nPrecentile")
 theme_void
 
+library(sf)
+
+GIS <- st_read("C:/Dev/Datasets/GIS/gis_osm_roads_free_1.shp")
+GIS <- st_read("C:/Dev/Datasets/GIS/gis_osm_water_a_free_1.shp")
+
+
+ggplot(GIS) + 
+	geom_sf()
