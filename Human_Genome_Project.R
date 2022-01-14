@@ -644,3 +644,172 @@ p + geom_tile() + scale_x_continuous(breaks = seq(1940, 1976, by = 4), expand = 
 install.packages("rgl")
 library(rgl)
 plot3d(mtcars$w4, mtcars$disp, mtcars$mpg, type = "s", size = 0.75, lit = FALSE)
+
+library(dplyr)
+library(tidyr)
+library(gcookbook)
+
+set.seed(392)
+
+c2 <- countries %>%
+	filter(Year == 2009) %>%
+	drop_na() %>%
+	sample_n(25)
+
+c2
+
+rownames(c2) <- c2$Name
+c2 <- c2[, 4:7]
+
+c3 <- scale(c2)
+
+hc <- hclust(dist(c3))
+plot(hc)
+
+plot(hc, hang = -1)
+
+hc_unscaled <- hclust(dist(c2))
+plot(hc_unscaled)
+
+library(grid)
+
+islice <- filter(isabel, z == min(z))
+
+every_n <- function(x, by = 2) {
+	x <- sort(x)
+	x[seq(1, length(x), by = by)]
+}
+
+keepx <- every_n(unique(isabel$x), by = 4)
+keepy <- every_n(unique(isabel$y), by = 4)
+
+islicesub <- filter(islice, x %in% keepx & y %in% keepy)
+
+library(grid)
+usa <- map_data("usa")
+
+ggplot(islicesub, aes(x = x, y = y)) +
+	geom_segment(aes(xend = x + vx/50, yend = y + vy/50),
+				 arrow = arrow(length = unit(0.1, "cm")), size = 0.25)
+
+ggplot(islicesub, aes(x = x, y = y)) +
+	geom_segment(aes(xend = x+vx/50, yend = y+vy/50, colour = speed),
+				 arrow = arrow(length = unit(0.1,"cm")), size = 0.6) +
+	scale_colour_continuous(low = "grey80", high = "darkred") +
+	geom_path(aes(x = long, y = lat, group = group), data = usa) +
+	coord_cartesian(xlim = range(islicesub$x), ylim = range(islicesub$y))
+
+keepx <- every_n(unique(isabel$x), by = 5)
+keepy <- every_n(unique(isabel$y), by = 5)
+keepz <- every_n(unique(isabel$z), by = 2)
+
+isub <- filter(isabel, x %in% keepx & y %in% keepy & z %in% keepz)
+
+ggplot(isub, aes(x = x, y = y)) +
+	geom_segment(aes(xend = x + vx/50, yend = y + vy/50, colour = speed), 
+				 arrow = arrow(length = unit(0.1, "cm")), size = 0.5) +
+	             scale_colour_continuous(low = "grey80", high = "darkred") +
+	             facet_wrap( ~ z)
+
+
+library(gcookbook)
+ggplot(heightweight, aes(sample = heightIn)) +
+	geom_qq() +
+	geom_qq_line()
+
+ggplot(heightweight, aes(sample = ageYear)) +
+	geom_qq() +
+	geom_qq_line()
+
+ggplot(heightweight, aes(x = heightIn)) +
+	stat_ecdf()
+
+ggplot(heightweight, aes(x = ageYear)) +
+	stat_ecdf
+
+
+UCBAdmissions
+
+ftable(UCBAdmissions)
+
+dimnames(UCBAdmissions)
+
+library(vcd)
+mosaic( ~ Admit + Gender + Dept, data = UCBAdmissions)
+
+mosaic( ~ Dept + Gender + Admit, data = UCBAdmissions, highlighting = "Admit",
+		highlighting_fill = c("lightblue","pink"), direction = c("v","h","v"))
+
+library(MASS)
+fold <- table(survey$Fold)
+
+
+par(mar = c(1, 1, 1, 1))
+pie(fold)
+
+library(maps)
+states_map <- map_data("state")
+
+ggplot(states_map, aes(x = long, y = lat, group = group)) +
+   geom_polygon(fill = "white", colour = "black")
+
+ggplot(states_map, aes(x = long, y = lat, group = group)) +
+	geom_path() + coord_map("mercator")
+
+world_map <- map_data("world")
+world_map
+
+east_asia <- map_data("world", region = c("Japan","China","North Korea", "South Korea"))
+
+ggplot(east_asia, aes(x = long, y = lat, group = group, fill = region)) +
+	geom_polygon(colour = "black") +
+				 	scale_fill_brewer(palette = "Set2")
+
+nz1 <- map_data("world", region = "New Zealand") %>%
+	filter(long > 0 & lat > -48) 
+
+ggplot(nz1, aes(x = long, y = lat, group = group)) +
+	geom_path()
+
+nz2 <- map_data("nz")
+ggplot(nz2, aes(x = long, y = lat, group = group)) + 
+	geom_path()
+
+crimes <- data.frame(state = tolower(rownames(USArrests)), USArrests)
+crimes
+
+library(maps)
+states_map <- map_data("state")
+
+crime_map <- merge(states_map, crimes, by.x = "region", by.y = "state")
+
+crime_map
+
+ggplot(crime_map, aes(x = long, y = lat, group = group, fill = Assault)) +
+	geom_polygon(colour = "black") +
+	coord_map("polyconic")
+
+
+
+crime_p <- ggplot(crimes, aes(map_id = state, fill = Assault)) +
+	geom_map(map = states_map, colour = "black") +
+	expand_limits(x = states_map$long, y = states_map$lat) +
+	coord_map("polyconic")
+
+crime_p + scale_fill_gradient2(low = "#559999", mid = "grey90", high = "#BB650B", 
+							   midpoint = median(crimes$Assault))
+
+crime_p + scale_fill_viridis_c()
+
+qa <- quantile(crimes$Assault, c(0, 0.2, 0.4, 0.6, 0.8, 1.0))
+
+crimes$Assault_q <- cut(crimes$Assault, qa, labels = c("0-20%","20-40%","40-60%","60-80%","80-100%"), include.lowest=TRUE)
+
+pal <- colorRampPalette(c("#559999","grey80","#BB650B"))(5)
+
+ggplot(crimes, aes(map_id = state, fill = Assault_q)) +
+	geom_map(map = states_map, colour = "black") +
+	scale_fill_manual(values = pal) +
+	expand_limits(x = states_map$long, y = states_map$lat) + 
+	coord_map("polyconic") +
+	labs(fill = "Assault Rate\nPrecentile")
