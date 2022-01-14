@@ -1,0 +1,89 @@
+---
+title: "ISM 646"
+author: "Derek Moore"
+date: "3/16/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+**R Markdown in Bold **
+
+*R Markdown in italic*
+{ r, fig.align="center", fig.width=6, fig.height=6, fig.cap="Figure: Here is a really important caption"}
+
+
+```{r plot, echo=FALSE}
+
+
+library(tidyverse)
+library(gapminder)
+library(ggplot2)
+
+
+gapminder_2007 <- gapminder %>%
+  filter(year==2007)
+
+gapminder_2007 %>%
+  ggplot(aes(x=gdpPercap, y=lifeExp, size=pop, fill=continent)) +
+  geom_boxplot() +
+  xlab("GDP Per Capita") +
+  theme(legend.position="none")
+
+```
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+
+summary(cars)
+
+```
+
+```{r include=FALSE}
+
+library(viridis)
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## Viridis colors
+
+```{r}
+image(volcano, col = viridis(200))
+
+```
+
+```{r gapfinder, echo=TRUE}
+
+library(ggplot2)
+library(plotly)
+library(gapminder)
+
+p <- gapminder %>%
+   filter(year==1977) %>%
+   ggplot(aes(gdpPercap, lifeExp, size=pop, color=continent)) +
+   geom_point() +
+   scale_x_log10() +
+   theme_bw()
+
+ggplotly(p)
+
+```
+
+
