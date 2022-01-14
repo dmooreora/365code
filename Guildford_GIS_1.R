@@ -3,6 +3,13 @@ install.packages("rgeos")
 install.packages("maptools")
 library(rgdal)
 library(rgeos)
+library(maps)
+library(MASS)
+library(ggplot2)
+library(sf)
+library(maps)
+
+
 
 file.exists('C:/Dev/Datasets/Guilford_Addressing_shp/Addr_Points_010421.shp')
 map <- readOGR(dsn="C:/Dev/Datasets/Guilford_Addressing_shp",layer="Addr_Points_010421",verbose=FALSE)
@@ -27,14 +34,6 @@ plot(map_wgs84, axes=TRUE)
 
 map4 <- readOGR(dsn="c:/Dev/Datasets/")
 
-library(MASS)
-fold <- table(survey$Fold)
-
-
-par(mar = c(1, 1, 1, 1))
-pie(fold)
-
-library(maps)
 states_map <- map_data("state")
 
 ggplot(states_map, aes(x = long, y = lat, group = group)) +
@@ -65,7 +64,6 @@ ggplot(nz2, aes(x = long, y = lat, group = group)) +
 crimes <- data.frame(state = tolower(rownames(USArrests)), USArrests)
 crimes
 
-library(maps)
 states_map <- map_data("state")
 
 crime_map <- merge(states_map, crimes, by.x = "region", by.y = "state")
@@ -102,11 +100,18 @@ ggplot(crimes, aes(map_id = state, fill = Assault_q)) +
 	labs(fill = "Assault Rate\nPrecentile")
 theme_void
 
-library(sf)
 
 GIS <- st_read("C:/Dev/Datasets/GIS/gis_osm_roads_free_1.shp")
 GIS <- st_read("C:/Dev/Datasets/GIS/gis_osm_water_a_free_1.shp")
-
+GIS <- st_read("C:/Dev/Datasets/GIS/gis_osm_places_a_free_1.shp")
 
 ggplot(GIS) + 
 	geom_sf()
+
+GIS
+
+GIS_mod <- GIS
+GIS_mod <- GIS[!is.na(GIS$fclass), ]
+
+ggplot(GIS_mod) +
+	geom_sf(aes(fill = fclass))
