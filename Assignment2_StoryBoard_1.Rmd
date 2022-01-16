@@ -1,0 +1,570 @@
+---
+title: "Assignment #2: ISM 646/IAF 605"
+author: "Derek Moore 8882113958"
+output: 
+  flexdashboard::flex_dashboard:
+      storyboard: true
+      theme: bootstrap
+      orientation: rows
+ 
+---
+
+```{r setup, include = FALSE, echo=FALSE}
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(DT)
+library(flexdashboard)
+library(tidyverse)
+library(datasets)
+library(ggplot2)
+library(grid)
+#library(png)
+#library(imager)
+#library(plyr)
+#install.packages("tidycensus")
+#library(tidycensus)
+#install.packages("tmap")
+#library(tmap)
+#library(tmaptools)
+#library(sf)
+#install.packages("imager")
+#library(imager)
+
+knitr::opts_chunk$set(fig.width = 5, fig.asp = 1/3)
+
+setwd("C:/Dev/ISM 646/Assignment2/")
+load(file = "Assignment2_646.RData")
+
+```
+
+<font face="sans-serif" size="1" color="#000000">Percentage of Subprime borrowers<br>during the Great Recession (2005 to 2009) </font> 
+====================================================================
+
+Row {data-width=100}
+------------------------------------------------------------------
+
+### <br><br><br><br><br> <font face="sans-serif" size="4" color="#000000"> The Great Recssion was one of the most turbulent economic periods of the past eighty year that lasted from December of 2007 and ended June of 2009.  It was a global economic recession that impacted hundreds of banks, some responsible for the financing of the Gross Domestic Product (GDP) of entire countries.  During this period, many banks closed.  Thousands lost jobs and fell into poverty due to the collapsing economy, which was basically fulled by rising federal interest rates and  market speculation centered around mortgage back securities that failed due to consumer defaulting on their mortgage.  This sent housing prices eventually plumetting, causing more economic turmoil in local economies around the world. As banks failed, businesses and consumers lost money.  In the U.S., the Great Recession ended with a GDP decline of 4.3 percent and an unemployment rate of 10 percent. </font><br><br> <font face="sans-serif" size="4" color="#000000">  The largest crisis of the Great Receession were subprime mortgages. Hedge funds, insurance companies, banks and other financial institutions created or insured mortgage-backed securities, all in an attempt make more money from the creation of default swaps (CDS) which tended to have higher rates of return.  In addition to this, the Federal Reserve raised rates. Adjustable-Rate Mortgages or ARMs and Interest Only (IO) loans, were being combined within the CDSs to give them high investor ratings, as to appear safe. This created a huge incentive for banks to approve subprime or low-credit, high-risk borrowers.  Derivatives spread the risk globally causing the 2007 banking crisis and the the Great Recession. </font>
+
+
+Row {.tabset .tabset-fade}
+--------------------------------------------------------------------
+
+### % Subprime Borrowers in North Carolina (2005-2010)
+
+```{r Subprime Borrowers in North Carolina}
+
+ChartA <- ggplot(Subprime_NC, aes(x = `Year-Quarter`, y = Percent, color=`Percent`)) + 
+  geom_point(size=3) + 
+  geom_smooth(method="lm", se=FALSE) +
+  ylab("% Receiving Subprime Loans (NC)") +
+   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1 ,size = 8), axis.title.y=element_text(size=5)) +
+    scale_x_discrete(limit = c("2005 Q1","2005 Q2","2005 Q3","2005 Q4","2006 Q1","2006 Q2","2006 Q3","2006 Q4","2007 Q1","2007 Q2","2007 Q3","2007 Q4","2008 Q1","2008 Q2","2008 Q3","2008 Q5","2009 Q1","2009 Q2","2009 Q3","2009 Q4","2010 Q1"))
+
+
+
+plot(ChartA)
+
+```
+
+
+### % subprime Borrower in Massachusetts (2005-2010)
+
+
+```{r Subprime Borrowers in Massachusetts}
+
+ChartA <- ggplot(Subprime_MA, aes(x = `Year-Quarter`, y = Percent, color=`Percent`)) + 
+  geom_point(size=3) + 
+  geom_smooth(method="lm", se=FALSE) +
+  ylab("% Receiving Subprime Loans (MA)") +
+   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1 ,size = 8), axis.title.y=element_text(size=5)) +
+  scale_x_discrete(limit = c("2005 Q1","2005 Q2","2005 Q3","2005 Q4","2006 Q1","2006 Q2","2006 Q3","2006 Q4","2007 Q1","2007 Q2","2007 Q3","2007 Q4","2008 Q1","2008 Q2","2008 Q3","2008 Q5","2009 Q1","2009 Q2","2009 Q3","2009 Q4","2010 Q1"))
+
+plot(ChartA)
+
+```
+
+
+### % subprime Borrowers in Florida (2005-2010)
+
+
+```{r Subprime Borrowers in California}
+
+ChartA <- ggplot(Subprime_CA, aes(x = `Year-Quarter`, y = Percent, color=`Percent`)) + 
+  geom_point(size=3) + 
+  geom_smooth(method="lm", se=FALSE) +
+  ylab("% Receiving Subprime Loans (CA)") +
+   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1 ,size = 8), axis.title.y=element_text(size=5)) +
+  scale_x_discrete(limit = c("2005 Q1","2005 Q2","2005 Q3","2005 Q4","2006 Q1","2006 Q2","2006 Q3","2006 Q4","2007 Q1","2007 Q2","2007 Q3","2007 Q4","2008 Q1","2008 Q2","2008 Q3","2008 Q5","2009 Q1","2009 Q2","2009 Q3","2009 Q4","2010 Q1"))
+
+plot(ChartA)
+
+
+```
+
+
+### % subprime Borrowers in California (2005-2010)
+
+
+
+```{r Subprime Borrowers in Florida}
+
+ChartA <- ggplot(Subprime_FL, aes(x = `Year-Quarter`, y = Percent, color=`Percent`)) + 
+  geom_point(size=3) + 
+  ylab("% Receiving Subprime Loans (FL)") +
+   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1 ,size = 8), axis.title.y=element_text(size=5)) +
+  scale_x_discrete(limit = c("2005 Q1","2005 Q2","2005 Q3","2005 Q4","2006 Q1","2006 Q2","2006 Q3","2006 Q4","2007 Q1","2007 Q2","2007 Q3","2007 Q4","2008 Q1","2008 Q2","2008 Q3","2008 Q5","2009 Q1","2009 Q2","2009 Q3","2009 Q4","2010 Q1"))
+
+plot(ChartA)
+
+
+```
+
+
+<font face="sans-serif" size="1" color="#000000">Number of SNAP receipients before, during <br> and after the Great Recession. December 2005 to June 2018 </font> 
+====================================================================
+
+
+Column {.sidebar}
+------------------------------------------------------------------
+### <br><br><br><br><br>
+### <font face="sans-serif" size="4" color="#000000">  The Supplemental Nutrition Assistance Program or SNAP is offered as a federal and local government program that provides food-purchasing assistance for low- and no-income people.</font>
+### <font face="sans-serif" size="4" color="#000000"> The overall economic downturn on 2008 saw many losing jobs.  The SNAP data from GeoFred data portal shows the impact of the economic recession on the daily livelihood of Americans.</font>
+
+Row
+--------------------------------------------------------------------
+
+
+Row {data-width=300}
+--------------------------------------------------------------------
+
+
+### Snap Recipients in North Carolina
+
+
+```{r Snap Recipients NC}
+
+ChartA <- ggplot(SNAP_NC, aes(x = Year, y = Number, color = Number)) + 
+  geom_point(size=3) + geom_line() +
+  geom_smooth(method="lm", se=FALSE) +
+   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1 ,size = 8), axis.title.y=element_text(size=10)) +
+ ylab("Number receiving SNAP (NC)")
+
+plot(ChartA)
+
+```
+
+
+### Snap Recipients in Massachusetts
+
+```{r Snap Recipients MA}
+
+ChartB <- ggplot(SNAP_MA, aes(x = Year, y = Number, color = Number)) + 
+  geom_point(size=3) + 
+  geom_smooth(method="lm", se=FALSE) +
+   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1 ,size = 8), axis.title.y=element_text(size=10)) +
+ ylab("Number receiving SNAP (MA)")
+
+plot(ChartB)
+
+```
+
+Row {data-width=300}
+--------------------------------------------------------------------
+
+### Snap Recipients in California
+```{r Snap Recipients CA}
+
+ChartB <- ggplot(SNAP_CA, aes(x = Year, y = Number, color = Number)) + 
+  geom_point(size=3) + geom_line() +
+  geom_smooth(method="lm", se=FALSE) +
+   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1 ,size = 8), axis.title.y=element_text(size=8)) +
+ ylab("Number receiving SNAP (CA)")
+
+plot(ChartB)
+```
+
+### Snap Recipients in Florida
+
+```{r Snap Recipients FL}
+
+ChartB <- ggplot(SNAP_FL, aes(x = Year, y = Number, color = Number)) + 
+  geom_point(size=3) + geom_line() +
+  geom_smooth(method="lm", se=FALSE) +
+   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1 ,size = 8), axis.title.y=element_text(size=8)) +
+ ylab("Number receiving SNAP (FL)")
+
+plot(ChartB)
+
+```
+
+<font face="sans-serif" size="1" color="#000000">Poverty Rates before, during <br> and after the Great Recession. (2005 to 2019)</font> 
+====================================================================
+
+
+Column {.sidebar}
+------------------------------------------------------------------
+### <br><br><br><br><br>
+### <font face="sans-serif" size="4" color="#000000"> Poverty rates rose during the recession, and did not ease until 2015, when they began to drop significanty</font>
+### <font face="sans-serif" size="4" color="#000000"> In states like California and North Carolina, poverty peaked at 20% and 17%, respectively in 2012.  While in states like Massachusetts, they would peak as high as 12%.</font>
+
+Row 
+-------------------------------------------------------------------
+
+
+Row {data-width=300}
+--------------------------------------------------------------------
+ 
+###  Percentage of People Living in Poverty in North Carolina
+
+
+
+```{r Poverty in NC}
+
+ChartC <- ggplot(Poverty_NC, aes(x = Year, y = Percent, color=Percent)) + 
+  geom_point(size=3) +
+  geom_smooth(method="lm", se=FALSE) +
+   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1 ,size = 8), axis.title.y=element_text(size=8)) +
+  ylab("% People in Poverty")  
+  
+
+plot(ChartC)
+
+```
+
+### Percentage of People Living in Poverty in Massachusetts
+
+
+``` {r Poverty in MA}
+
+ChartC <- ggplot(Poverty_MA, aes(x = Year, y = Percent, color=Percent)) + 
+  geom_point(size=3) +
+  geom_smooth(method="lm", se=FALSE) +
+   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1 ,size = 8), axis.title.y=element_text(size=8)) +
+  ylab("% People in Poverty")  
+
+
+plot(ChartC)
+
+
+```
+
+
+Row {data-width=300}
+--------------------------------------------------------------------
+
+
+### % of People living Poverty in California
+
+``` {r Poverty in CA}
+
+ChartC <- ggplot(Poverty_CA, aes(x = Year, y = Percent, color=Percent)) + 
+  geom_point(size=3) +
+  geom_smooth(method="lm", se=FALSE) +
+   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1 ,size = 8), axis.title.y=element_text(size=8)) +
+  ylab("% People living in Poverty")  
+
+
+plot(ChartC)
+
+```
+
+### % of People living Poverty in Florida
+
+
+``` {r Poverty in FL}
+
+ChartC <- ggplot(Poverty_FL, aes(x = Year, y = Percent, color=Percent)) + 
+  geom_point(size=3) +
+  geom_smooth(method="lm", se=FALSE) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1 ,size = 8), axis.title.y=element_text(size=8)) +
+  ylab("% People living in Poverty")
+   
+
+  
+  
+plot(ChartC)
+
+
+```
+
+
+<font face="sans-serif" size="1" color="#000000"> Home Values and Bankruptcies <br> (2000-2016) </font> 
+====================================================================
+
+Column {.sidebar}
+------------------------------------------------------------------
+### <br><br><br><br><br>
+### <font face="sans-serif" size="4" color="#000000"> ACS Housing Values for North Carolina, Massachusetts, Florida and California </font>
+### <font face="sans-serif" size="4" color="#000000"> Housing prices spiked significantly in the housing bubble, and then crashed during the recession.  Throughout the post-recession period, housing prices improved. </font>
+### <font face="sans-serif" size="4" color="#000000"> Around that same time, Bankruptcies increased significantly as more people lost jobs and defaulted on loans around 2009-2010.   </font>
+### <font face="sans-serif" size="4" color="#000000"> The number of people in poverty increased during and after the recession, and did not decline until significantly until after 2015.</font>
+
+Row {data-width=300}
+--------------------------------------------------------------------
+ 
+
+
+Row {data-width=300}
+--------------------------------------------------------------------
+
+### Home Values by State.
+
+```{r Home Values by State}
+
+ChartD <- ggplot(data=ACS_Data_Housing, aes(x=Year, y=`Home Values`, group=as.factor(`State`), color=as.factor(`State`))) +
+   geom_line() + geom_point() +
+  ylab("Home Values") +
+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1 ,size = 8), axis.title.y=element_text(size=8)) +
+labs(col="States")
+ 
+
+plot(ChartD)
+
+```
+
+
+Row {data-width=300}
+--------------------------------------------------------------------
+
+
+### Bankrupties by State
+
+```{r Bankruptcies Values by State}
+
+ChartD <- ggplot(data=ACS_Data_Housing, aes(x=Year, y=`Bankruptcies`, group=as.factor(`State`), color=as.factor(`State`))) +
+  geom_line() + geom_point() +
+  ylab("Bankruptcies") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1 ,size = 8), axis.title.y=element_text(size=8)) +
+  labs(col="States")
+
+plot(ChartD)
+
+
+```
+
+Row {data-width=300}
+--------------------------------------------------------------------
+
+
+### Percent of People in Poverty by State
+
+```{r Percent People in Poverty by State}
+
+ChartD <- ggplot(data=ACS_Data_Housing, aes(x=Year, y=`Percent People in Poverty`, group=as.factor(`State`), color=as.factor(`State`))) +
+  geom_line() + geom_point() +
+  ylab("Percent People in Poverty") +
+   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1 ,size = 8), axis.title.y=element_text(size=8)) +
+  labs(col="States")
+
+plot(ChartD)
+
+
+```
+
+
+
+<font face="sans-serif" size="1" color="#000000"> Zillow Housing Values by State </font> 
+====================================================================
+
+
+Column {.sidebar}
+------------------------------------------------------------------
+### <br><br><br><br><br>
+### <font face="sans-serif" size="4" color="#000000"> During the housing bubble, home prices grew </font>
+### <font face="sans-serif" size="4" color="#000000"> But when the housing market crashed, home prices plummetted by 10% or more, leaving many borrowers under water on their loads.  Many people had to declare bankruptcies due to the economic downturn. </font>
+### <font face="sans-serif" size="4" color="#000000">  However, looking at the trend line, indicates that housing market was able to eventually recovery.  Purchasing a home is still considered a good investment in the long-term, since owning a home for the long-term will see this property increase in value.  ooking at the chart trends, year-over-year, above or with inflation. </font>
+  
+ 
+Row 
+-------------------------------------------------------------------
+
+
+Row {data-width=300}
+-------------------------------------------------------------------
+
+
+### Housing Values in North Carolina
+
+```{r Income levels in North Carolina}
+
+ChartF <- ggplot(ZORI_res, aes(x= `Date`, y = NorthCarolina)) + 
+  geom_line() +
+  geom_smooth(method="lm", se=FALSE) +
+  ylab("Zillow Home Values 2000-2015 North Carolina") +
+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1 ,size = 8), axis.title.y=element_text(size=8)) 
+
+
+plot(ChartF)
+
+
+```
+
+ 
+
+### Housing Values in Massachusetts
+
+ 
+```{r}
+
+ChartF <- ggplot(ZORI_res, aes(x= `Date`, y = Massachusetts)) + 
+  geom_line() +
+  geom_smooth(method="lm", se=FALSE) +
+  ylab("Zillow Home Values 2000-2015 Massachusetts") +
+     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1 ,size = 8), axis.title.y=element_text(size=8))
+
+
+
+plot(ChartF)
+
+
+```
+
+ 
+
+
+Row {data-width=300}
+-------------------------------------------------------------------
+
+
+### Housing Values in California
+
+
+```{r Income levels in California}
+
+ChartF <- ggplot(ZORI_res, aes(x= `Date`, y = California)) + 
+  geom_line() +
+  geom_smooth(method="lm", se=FALSE) +
+  ylab("Zillow Home Values 2000-2015 California") +
+     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1 ,size = 8), axis.title.y=element_text(size=8))
+
+
+ 
+plot(ChartF)
+
+
+```
+ 
+ 
+ 
+### Housing Values in Florida
+
+
+```{r}
+
+ChartF <-  ggplot(ZORI_res, aes(x= `Date`, y = Florida)) + 
+    geom_line() +
+    geom_smooth(method="lm", se=FALSE) +
+    ylab("Zillow Home Values 2000-2015 Florida") +
+     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1 ,size = 8), axis.title.y=element_text(size=8))
+
+ 
+plot(ChartF)
+
+
+```
+
+
+
+<font face="sans-serif" size="1" color="#000000">Economic Research (2000 to 2015) </font> 
+====================================================================
+
+Column {.sidebar}
+------------------------------------------------------------------
+### <br><br><br><br><br>
+### <font face="sans-serif" size="4" color="#000000"> The Dow 30 Stocks closed higher Post-Recession </font>
+### <font face="sans-serif" size="4" color="#000000"> Stocks improved overall signifcantly through the 2010s.  With prices peaking in 2015.  This growth in the market occurred much faster than housing values, poverty and employment levels in the period after the Great Recession </font>
+
+
+Row 
+-------------------------------------------------------------------
+
+
+Row {data-width=300}
+--------------------------------------------------------------------
+
+
+### Market Research and Housing Market Recovery 2000-2017
+
+
+```{r Stock Market and GDP}
+
+ChartE <- ggplot(data=ACS_Data_Stock_Market, aes(x=Year, y=`Dow 30 Closing Price`,group=Year, fill=Year)) + 
+  geom_boxplot() +
+  geom_jitter(color="black", size=0.4, alpha=0.9) +
+  labs( x="Year", y="Dow 30 Closing Price") +
+     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1 ,size = 8), axis.title.y=element_text(size=8))
+
+
+plot(ChartE)
+
+
+```
+
+Row {data-width=300}
+--------------------------------------------------------------------
+
+
+### Housing Market Research
+
+
+```{r Housing Market Recovery}
+ChartE <- ggplot(ZORI_mean, aes(x= `Year-Quarter`, y = Value, fill=MsaName)) + 
+  geom_col() +
+  geom_smooth(method="lm", se=FALSE) +
+  ylab("Zillow Home Values") +
+   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1 ,size = 8), axis.title.y=element_text(size=8)) +
+  labs(color="State") +
+  scale_x_discrete(limit = c("2014-01","2015-01","2016-01","2017-01","2018-01"))
+ 
+
+  plot(ChartE)
+
+
+```
+
+
+
+<font face="sans-serif" size="1" color="#000000">Post Recession Poverty Rates (2010-2017) </font> 
+====================================================================
+
+Column {.sidebar}
+------------------------------------------------------------------
+
+### <br><br><br><br><br>
+### <font face="sans-serif" size="4" color="#000000"> This is the change in poverty after the great recession </font>
+### <font face="sans-serif" size="4" color="#000000"> Poverty rates increased in more states during the post-recession  between 2010 and 2017.  This may be an indication of very slow recovery in the post-recession economy or some other factor. </font>
+
+
+Row 
+-------------------------------------------------------------------
+
+
+Row {data-width=300}
+-------------------------------------------------------------------
+ 
+### Post-recession Poverty Levels (2010)
+ 
+
+![](images/ACS_geo_2010.png)
+ 
+ 
+
+Row {data-width=300}
+--------------------------------------------------------------------
+
+### Post-recession Poverty Levels (2017)
+
+
+![](images/ACS_geo_2017.png)
+
+
+
+
+
+
+
+
+
+
+
