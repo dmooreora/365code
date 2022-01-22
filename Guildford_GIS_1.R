@@ -29,6 +29,28 @@ line <- ggplot(line_df, aes(x = year, y = lifeExp)) +
        subtitle = "Life expetancy in Malawi 1952-2007")
 line
 
+line_df <- gapminder %>%
+  filter(country == "China")
+
+line <- ggplot(line_df, aes(x=year, y=lifeExp)) +
+  geom_line(colour="#1380A1", size = 1) +
+  geom_hline(yintercept = 0, size = 1, colour = "#333333") +
+  bbc_style() +
+  labs(title = "Living Longer", subtitle="Life expectancy in China 1952 - 2007")
+
+multiple_line_df <- gapminder %>%
+  filter(country == "China" | country == "United States")
+
+multiple_line <- ggplot(multiple_line_df, aes(x = year, y = lifeExp, colour = country)) +
+  geom_line(size = 1) +
+  geom_hline(yintercept = 0, size = 1, colour="#333333") +
+  scale_colour_manual(values = c("#FAAB18","#1380A1")) +
+  bbc_style() +
+  labs(title="Living longer",
+       subtitle = "Life expectancy in China and the US")
+
+multiple_line
+
 theme(panel.grid.major.x = element_line(colour="#cbcbcb"),
       panel.gri.major.y=element_blank())
 
