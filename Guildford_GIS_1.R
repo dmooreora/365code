@@ -1,6 +1,7 @@
 install.packages("rgdal")
 install.packages("rgeos")
 install.packages("maptools")
+install.packages("igraph")
 library(rgdal)
 library(rgeos)
 library(maps)
@@ -8,6 +9,7 @@ library(MASS)
 library(ggplot2)
 library(sf)
 library(maps)
+library(igraph)
 
 if(!require(pacman))install.packages("pacman")
 pacman::p_load('dplyr', 'tidyr', 'gapminder',
