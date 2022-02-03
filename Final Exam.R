@@ -44,12 +44,28 @@ library(ggpubr)
 # Import the student_performance.csv and explore it.
 #====================== Write R code HERE ==========================
 
-students <- read.csv("c:/Dev/R/student_performance.csv",header=TRUE)
+students <- read.csv("c:/Dev/R/student_performance.csv", header=TRUE)
 str(students)
 summary(students)
 
- 
-#===================================================================
+summarize(students, avg_age = mean(age, na.rm=TRUE))
+
+by_values <- group_by(students, studytime, failures, traveltime)
+
+by_values <- group_by(students, studytime, failures, traveltime)
+
+summarize(by_values, avg_travel=mean(studytime, na.rm = TRUE))
+
+dp <- summarize(students, count = n(), st_mean = mean(studytime, na.rm=TRUE),
+                fl_mean = mean(failures, na.rm = TRUE)
+                )
+dp <- filter(dp, count > 20)
+
+ggplot(data = dp, mapping = aes(x = st_mean, y = fl_mean)) +
+  geom_point(aes(size = count), alpha = 1/3) +
+  geom_smooth(se = FALSE)
+       
+#==================================================================
 
 
 
