@@ -6,9 +6,12 @@
 
 
 library(tidyverse)
+library(tidycensus)
 library(tidyr)
 library(ggplot2)
 library(dplyr)
+library(mapview)
+library(sf)
 install.packages("broom")
 library(readxl)
 install.packages("stringi")
@@ -18,165 +21,356 @@ library(tidycensus)
 install.packages("tmap")
 library(tmap)
 library(tmaptools)
-library(sf)
 library(png)
 install.packages("imager")
 library(imager)
+install.packages("rgdal")
+install.packages("rgeos")
+install.packages("maptools")
+install.packages("igraph")
+library(rgdal)
+library(rgeos)
+library(maps)
+library(MASS)
+library(sf)
+library(maps)
+library(igraph)
+
 
 #Set Home Directory
 
-setwd("C:/Dev/ISM 646/Assignment2/data/")
+setwd("C:/Dev/Datasets/")
 
 
 # Import from the EXCEL spreadsheets and explore it.  Load ACS data through US Census API
 
-ZORI_res <- read_excel("Condo_Market_Zillow.xlsx")
+#ZORI_res <- read_excel("Condo_Market_Zillow.xlsx")
  
-ZORI <- read_excel("Zip_ZORI_AllHomesPlusMultifamily_Smoothed.xls")
+#ZORI <- read_excel("Zip_ZORI_AllHomesPlusMultifamily_Smoothed.xls")
+
+census_api_key('84b9a04931a2937de9e353dfac85129ca4c477a0', install=TRUE)
+
+variables <- load_variables(2019, "acs5", cache=TRUE)
+
+summary(variables)
 
 
-Subprime_Credit <- 
-  read_excel("GeoFRED_Equifax_Subprime_Credit_Population_by_County_Percent.xls", skip = 1)
+var1 <-  dplyr::filter(variables, grepl("INCOME",concept)) %>%
+         group_by("label") 
+var_label <-  unique(var1["label"])
+var_concept <- unique(var1["concept"])var_list <- split(var_concept, seq(nrow(var_concept)))
+var_string <- toString(var_concept)
+writeLines(var_string)
 
-SNAP_Recipients <-
-GeoFRED_SNAP_Benefits_Recipients_by_County_Persons <- read_excel("GeoFRED_SNAP_Benefits_Recipients_by_County_Persons.xls", skip = 1)
+  write.csv(var1, "census_data_income.csv")
+
+vData <-  dplyr::filter(variables, grepl("B19001",name))
+write.csv(vData,"census_data.csv")        
+
+
+#var1 <-  variables %>%
+#  select('name','label','concept') %>%
  
-ACS_Data <- read_excel("2000 to 2017 Data.xls")
+
+house_income_all <- get_acs(geography = "state",
+              variables = c(TOTAL = "B19001_001",
+                            LESS_10K = "B19001_002",
+                            B10K_15K = "B19001_003",
+                            B15K_20K = "B19001_004",
+                            B20K_25K = "B19001_005",
+                            B25K_30K = "B19001_006",
+                            B30K_35K = "B19001_007",
+                            B35K_40K = "B19001_008",
+                            B40K_45K = "B19001_009",
+                            B45K_50K = "B19001_010",
+                            B50K_60K = "B19001_011",
+                            B60K_75K = "B19001_012",
+                            B75K_100K = "B19001_013",
+                            B100K_125K = "B19001_014",
+                            B125K_150K = "B19001_015",
+                            B150K_200K = "B19001_016",
+                            B200K_MORE = "B19001_017"),
+              output = "tidy",
+              geometry = TRUE,
+              year = 2019) #%>%
+       ## select(-moe)
+
+house_income_white <- get_acs(geography = "state",
+                            variables = c(TOTAL = "B19001_001",
+                                          LESS_10K = "B19001A_002",
+                                          B10K_15K = "B19001A_003",
+                                          B15K_20K = "B19001A_004",
+                                          B20K_25K = "B19001A_005",
+                                          B25K_30K = "B19001A_006",
+                                          B30K_35K = "B19001A_007",
+                                          B35K_40K = "B19001A_008",
+                                          B40K_45K = "B19001A_009",
+                                          B45K_50K = "B19001A_010",
+                                          B50K_60K = "B19001A_011",
+                                          B60K_75K = "B19001A_012",
+                                          B75K_100K = "B19001A_013",
+                                          B100K_125K = "B19001A_014",
+                                          B125K_150K = "B19001A_015",
+                                          B150K_200K = "B19001A_016",
+                                          B200K_MORE = "B19001A_017"),
+                            output = "tidy",
+                            geometry = TRUE,
+                            year = 2019) #%>%
+ # select(-moe)
+
+house_income_black <- get_acs(geography = "state",
+                              variables = c(TOTAL = "B19001_001",
+                                            LESS_10K = "B19001B_002",
+                                            B10K_15K = "B19001B_003",
+                                            B15K_20K = "B19001B_004",
+                                            B20K_25K = "B19001B_005",
+                                            B25K_30K = "B19001B_006",
+                                            B30K_35K = "B19001B_007",
+                                            B35K_40K = "B19001B_008",
+                                            B40K_45K = "B19001B_009",
+                                            B45K_50K = "B19001B_010",
+                                            B50K_60K = "B19001B_011",
+                                            B60K_75K = "B19001B_012",
+                                            B75K_100K = "B19001B_013",
+                                            B100K_125K = "B19001B_014",
+                                            B125K_150K = "B19001B_015",
+                                            B150K_200K = "B19001B_016",
+                                            B200K_MORE = "B19001B_017"),
+                              output = "tidy",
+                              geometry = TRUE,
+                              year = 2019) # %>%
+  #select(-moe)
+
+house_income_native <- get_acs(geography = "state",
+                              variables = c(TOTAL = "B19001_001",
+                                            LESS_10K = "B19001C_002",
+                                            B10K_15K = "B19001C_003",
+                                            B15K_20K = "B19001C_004",
+                                            B20K_25K = "B19001C_005",
+                                            B25K_30K = "B19001C_006",
+                                            B30K_35K = "B19001C_007",
+                                            B35K_40K = "B19001C_008",
+                                            B40K_45K = "B19001C_009",
+                                            B45K_50K = "B19001C_010",
+                                            B50K_60K = "B19001C_011",
+                                            B60K_75K = "B19001C_012",
+                                            B75K_100K = "B19001C_013",
+                                            B100K_125K = "B19001C_014",
+                                            B125K_150K = "B19001C_015",
+                                            B150K_200K = "B19001C_016",
+                                            B200K_MORE = "B19001C_017"),
+                              output = "tidy",
+                              geometry = TRUE,
+                              year = 2019) # %>%
+  # select(-moe)
+
+house_income_asian <- get_acs(geography = "state",
+                               variables = c(TOTAL = "B19001_001",
+                                             LESS_10K = "B19001D_002",
+                                             B10K_15K = "B19001D_003",
+                                             B15K_20K = "B19001D_004",
+                                             B20K_25K = "B19001D_005",
+                                             B25K_30K = "B19001D_006",
+                                             B30K_35K = "B19001D_007",
+                                             B35K_40K = "B19001D_008",
+                                             B40K_45K = "B19001D_009",
+                                             B45K_50K = "B19001D_010",
+                                             B50K_60K = "B19001D_011",
+                                             B60K_75K = "B19001D_012",
+                                             B75K_100K = "B19001D_013",
+                                             B100K_125K = "B19001D_014",
+                                             B125K_150K = "B19001D_015",
+                                             B150K_200K = "B19001D_016",
+                                             B200K_MORE = "B19001D_017"),
+                               output = "tidy",
+                               geometry = TRUE,
+                               year = 2019) #%>%
+   # select(-moe)
+
+house_income_hi_pac <- get_acs(geography = "state",
+                              variables = c(TOTAL = "B19001_001",
+                                            LESS_10K = "B19001E_002",
+                                            B10K_15K = "B19001E_003",
+                                            B15K_20K = "B19001E_004",
+                                            B20K_25K = "B19001E_005",
+                                            B25K_30K = "B19001E_006",
+                                            B30K_35K = "B19001E_007",
+                                            B35K_40K = "B19001E_008",
+                                            B40K_45K = "B19001E_009",
+                                            B45K_50K = "B19001E_010",
+                                            B50K_60K = "B19001E_011",
+                                            B60K_75K = "B19001E_012",
+                                            B75K_100K = "B19001E_013",
+                                            B100K_125K = "B19001E_014",
+                                            B125K_150K = "B19001E_015",
+                                            B150K_200K = "B19001E_016",
+                                            B200K_MORE = "B19001E_017"),
+                              output = "tidy",
+                              geometry = TRUE,
+                              year = 2019) ##%>%
+  ##select(-moe)
+
+house_income_other <- get_acs(geography = "state",
+                               variables = c(TOTAL = "B19001_001",
+                                             LESS_10K = "B19001F_002",
+                                             B10K_15K = "B19001F_003",
+                                             B15K_20K = "B19001F_004",
+                                             B20K_25K = "B19001F_005",
+                                             B25K_30K = "B19001F_006",
+                                             B30K_35K = "B19001F_007",
+                                             B35K_40K = "B19001F_008",
+                                             B40K_45K = "B19001F_009",
+                                             B45K_50K = "B19001F_010",
+                                             B50K_60K = "B19001F_011",
+                                             B60K_75K = "B19001F_012",
+                                             B75K_100K = "B19001F_013",
+                                             B100K_125K = "B19001F_014",
+                                             B125K_150K = "B19001F_015",
+                                             B150K_200K = "B19001F_016",
+                                             B200K_MORE = "B19001F_017"),
+                               output = "tidy",
+                               geometry = TRUE,
+                               year = 2019) 
+
+house_income_hispanic <- get_acs(geography = "state",
+                              variables = c(TOTAL = "B19001_001",
+                                            LESS_10K = "B19001I_002",
+                                            B10K_15K = "B19001I_003",
+                                            B15K_20K = "B19001I_004",
+                                            B20K_25K = "B19001I_005",
+                                            B25K_30K = "B19001I_006",
+                                            B30K_35K = "B19001I_007",
+                                            B35K_40K = "B19001I_008",
+                                            B40K_45K = "B19001I_009",
+                                            B45K_50K = "B19001I_010",
+                                            B50K_60K = "B19001I_011",
+                                            B60K_75K = "B19001I_012",
+                                            B75K_100K = "B19001I_013",
+                                            B100K_125K = "B19001I_014",
+                                            B125K_150K = "B19001I_015",
+                                            B150K_200K = "B19001I_016",
+                                            B200K_MORE = "B19001I_017"),
+                              output = "tidy",
+                              geometry = TRUE,
+                              year = 2019)  
+
  
-
-Poverty <-  read_excel("GeoFRED_Estimated_Percent_of_People_of_All_Ages_in_Poverty_by_County_Percent.xls", skip = 1)
- 
-census_api_key('84b9a04931a2937de9e353dfac85129ca4c477a0', install=TRUE, overwrite=TRUE)
-
-ACS_2019 <- get_acs("state",  year=2019, variables="B01001_002", output="tidy", geometry=TRUE)
-
-summary(ACS_2019)
-
-ACS_2010 <- get_acs("state",  year=2010, variables="S1702_C02_001", output="tidy", geometry=TRUE) %>%
-  select(-moe)
-
-ACS_2011 <- get_acs("state", variables="S1702_C02_001", year=2011, output="tidy", geometry=TRUE) %>%
-  select(-moe)
-
-ACS_2012 <- get_acs("state", variables="S1702_C02_001", year=2012, output="tidy", geometry=TRUE) %>%
-  select(-moe)
-  
-ACS_2013 <- get_acs("state", variables="S1702_C02_001", year=2013, output="tidy", geometry=TRUE) %>%
-  select(-moe)
-
-ACS_2014 <- get_acs("state", variables="S1702_C02_001", year=2014, output="tidy", geometry=TRUE) %>%
-  select(-moe)
-
-ACS_2015 <- get_acs("state", variables="S1702_C02_001", year=2015, output="tidy", geometry=TRUE) %>%
-  select(-moe)
-
-ACS_2016 <- get_acs("state", variables="S1702_C02_001", year=2016, output="tidy", geometry=TRUE) %>%
-  select(-moe)
-
-ACS_2017 <- get_acs("state", variables="S1702_C02_001", year=2017, output="tidy", geometry=TRUE) %>%
-  select(-moe)
 
   
 #========= Clean and Pivot Data =============================
 
-SNAP_df <- SNAP_Recipients[-c(1,3)]
-Subprime_df <- Subprime_Credit[-c(1,3)]
-Poverty_df <- Poverty[-c(1,3)]
-ZORI_df <- ZORI[-c(1,2,3)]
+#SNAP_df <- SNAP_Recipients[-c(1,3)]
+#Subprime_df <- Subprime_Credit[-c(1,3)]
+#Poverty_df <- Poverty[-c(1,3)]
+#ZORI_df <- ZORI[-c(1,2,3)]
 
-SNAP_df2 <- SNAP_df %>%
-    pivot_longer(!"Region Name", names_to="Year", values_to="Number")
+house_income_hispanic <- house_income_hispanic[-c(1,2,4,5,6)]
+Hispanic <- house_income_hispanic %>%
+    pivot_longer(!"variable", names_to="income range", values_to="total")
 
-Subprime_df2 <- Subprime_df %>% 
-    pivot_longer(!"Region Name", names_to="Year-Quarter",values_to="Percent")
-
-Poverty_df2 <- Poverty_df %>%
-    pivot_longer(!"Region Name", names_to="Year", values_to="Percent")
-
+ 
 ZORI_df2 <- ZORI_df %>% 
     pivot_longer(!"MsaName", names_to="Year-Quarter", values_to="Value")
 
 #====================== Remove Nulls =============================
 
-Subprime_df2  <- Subprime_df2 %>%
+house_income_hispanic  <- house_income_hispanic %>%
   na.omit()
 
-SNAP_df2 <- SNAP_df2 %>%
-  na.omit()
-  
-Poverty_df2 <- Poverty_df2 %>%
-  na.omit()
+write.csv(house_income_hispanic,"house_income_hispanic.csv")        
 
-ACS_Data_df <- ACS_Data %>% 
-   #spread(State, `House Delinquency Rate`) %>%
-   filter(`Home Values` >= 0) %>%
-   na.omit()
-
-ZORI_df2 <- ZORI_df2 %>%
-  na.omit()
-
-#head(ACS_Data) 
-#head(ACS_Data_df,10)
-#head(Poverty_df2,10)
-#head(Subprime_df2,10)
-#head(SNAP_df2,10)
-
-#=======================================================================
-
-#========== Group and Organize Data ====================================
+#ACS_Data_df <- ACS_Data %>% 
+#    filter(`Home Values` >= 0) %>%
+#   na.omit()
 
 
-ACS_geo_2010 <- ACS_2010 %>%
+
+#========================= Tableau Visualization Testing ===============================
+
+usa_pop <- read.csv(header=TRUE, file="nst-est2019-popchg2010_2019.csv")
+summary(usa_pop)
+usa_pop_estimate <- usa_pop %>%
+                   select(NAME, POPESTIMATE2019) 
+
+house_income_all <- get_acs(geography = "state",
+                            variables = c(TOTAL = "B19001_001",
+                                          LESS_10K = "B19001_002",
+                                          B10K_15K = "B19001_003",
+                                          B15K_20K = "B19001_004",
+                                          B20K_25K = "B19001_005",
+                                          B25K_30K = "B19001_006",
+                                          B30K_35K = "B19001_007",
+                                          B35K_40K = "B19001_008",
+                                          B40K_45K = "B19001_009",
+                                          B45K_50K = "B19001_010",
+                                          B50K_60K = "B19001_011",
+                                          B60K_75K = "B19001_012",
+                                          B75K_100K = "B19001_013",
+                                          B100K_125K = "B19001_014",
+                                          B125K_150K = "B19001_015",
+                                          B150K_200K = "B19001_016",
+                                          B200K_MORE = "B19001_017"),
+                            output = "tidy",
+                            geometry = TRUE,
+                            year = 2019) %>%
+  select(-moe)
+
+house_income_pivot <- house_income_all[-c(1,2,4,5,6)]
+summary(house_income_pivot)
+summary(house_income_all)
+summary(usa_pop_estimate)
+
+
+house_income_merge <- merge(usa_pop_estimate, house_income_all, by = "NAME")
+
+house_income_total <- house_income_merge %>%
+                      filter(variable=="TOTAL") %>%
+                      select(NAME, estimate)
+
+house_income_merge <- merge(house_income_merge, house_income_total, by = "NAME")
+
+house_income_percent <- house_income_merge %>%
+                        mutate(estimate = ifelse(variable=="TOTAL",(estimate.x/POPESTIMATE2019)*100,(estimate.x/estimate.y)*100)) %>%
+                        select(NAME, GEOID, variable, estimate, moe, geometry)
+
+# usa_pop_percentage %>%
+#  augment(newdata = wine_test) %>%
+#  mutate(residual = quality - .fitted) %>%
+#  mutate(sq_residual = residual^2) %>%
+#  summarize(mse = mean(sq_residual)) %>%
+#  summarize(rmse = sqrt(mse))
+
+
+
+summary(house_income_all)
+house_income_all
+st_write(house_income_percent, "House_income2.shp")
+
+house_income_2019 <- house_income_all %>%
   select('GEOID','NAME','variable','estimate','geometry') %>%
-  filter(variable=='S1702_C02_001') %>%
   group_by(GEOID, NAME) %>%
   summarize(estimate = sum(estimate))
 
-str(ACS_geo_2010)
+house_income_2019
+
+tm_shape(house_income_2019) + tm_polygons("estimate")
+dev.off()
+
+jpeg(file="housing_2019.jpg")
+tm_shape(house_income_2019, raster.warp = TRUE) + tm_polygons("estimate") + tm_layout(title.position=c("left","top"), title="Housing values 2019", asp=1)
+dev.off()
 
 
 
-ACS_geo_2011 <- ACS_2011 %>%
+
+
+#==================================================================================================
+
+hispanic_2019 <- house_income_hispanic %>%
   select('GEOID','NAME','variable','estimate','geometry') %>%
-  filter(variable=='S1702_C02_001') %>%
-  group_by(GEOID, NAME) %>%
-  summarize(estimate = sum(estimate)) 
-
-ACS_geo_2012 <- ACS_2012 %>%
-  select('GEOID','NAME','variable','estimate','geometry') %>%
-  filter(variable=='S1702_C02_001') %>%
-  group_by(GEOID, NAME) %>%
-  summarize(estimate = sum(estimate)) 
-
-ACS_geo_2013 <- ACS_2013 %>%
-  select('GEOID','NAME','variable','estimate','geometry') %>%
-  filter(variable=='S1702_C02_001') %>%
-  group_by(GEOID, NAME) %>%
-  summarize(estimate = sum(estimate)) 
-
-ACS_geo_2014 <- ACS_2014 %>%
-  select('GEOID','NAME','variable','estimate','geometry') %>%
-  filter(variable=='S1702_C02_001') %>%
-  group_by(GEOID, NAME) %>%
-  summarize(estimate = sum(estimate)) 
-
-ACS_geo_2015 <- ACS_2015 %>%
-  select('GEOID','NAME','variable','estimate','geometry') %>%
-  filter(variable=='S1702_C02_001') %>%
-  group_by(GEOID, NAME) %>%
-  summarize(estimate = sum(estimate)) 
-
-ACS_geo_2016 <- ACS_2016 %>%
-  select('GEOID','NAME','variable','estimate','geometry') %>%
-  filter(variable=='S1702_C02_001') %>%
   group_by(GEOID, NAME) %>%
   summarize(estimate = sum(estimate))
 
-ACS_geo_2017 <- ACS_2017 %>%
-  select('GEOID','NAME','variable','estimate','geometry') %>%
-  filter(variable=='S1702_C02_001') %>%
-  group_by(GEOID, NAME) %>%
-  summarize(estimate = sum(estimate))
 
 
 SNAP_NC <- SNAP_df2 %>%
@@ -456,9 +650,12 @@ tm_shape(ACS_geo_2010) + tm_polygons("estimate") + tm_layout(title.position=c("l
 dev.off()
 
 plot(load.image("ACS_geo_2010.jpg"), axes=FALSE)
+dev.off()
 
+tm_shape(house_income_hispanic) + tm_polygons("estimate")
+dev.off()
 
-tm_shape(ACS_geo_2011) + tm_polygons("estimate")
+writeOGR(house_income_hispanic, dsn="C:/Dev/Datasets/",layer="map", drive = "ESRI Shapefile")
 
 tm_shape(ACS_geo_2012) + tm_polygons("estimate")
 
