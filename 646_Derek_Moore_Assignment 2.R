@@ -54,6 +54,7 @@ variables <- load_variables(2019, "acs5", cache=TRUE)
 
 summary(variables)
 
+#---------------------------------------------------------------------------
 
 var1 <-  dplyr::filter(variables, grepl("INCOME",concept)) %>%
          group_by("label") 
@@ -62,11 +63,12 @@ var_concept <- unique(var1["concept"])var_list <- split(var_concept, seq(nrow(va
 var_string <- toString(var_concept)
 writeLines(var_string)
 
-  write.csv(var1, "census_data_income.csv")
+write.csv(var1, "census_data_income.csv")
 
 vData <-  dplyr::filter(variables, grepl("B19001",name))
 write.csv(vData,"census_data.csv")        
 
+#--------------------------------------------------------------------------
 
 #var1 <-  variables %>%
 #  select('name','label','concept') %>%
@@ -315,23 +317,83 @@ house_income_all <- get_acs(geography = "state",
                             year = 2019) %>%
   select(-moe)
 
-house_income_pivot <- house_income_all[-c(1,2,4,5,6)]
+#house_income_pivot <- house_income_all[-c(1,2,4,5,6)]
 summary(house_income_pivot)
 summary(house_income_all)
 summary(usa_pop_estimate)
 
 
 house_income_merge <- merge(usa_pop_estimate, house_income_all, by = "NAME")
+hou_inc_white_merge <- merge(usa_pop_estimate, house_income_white, by = "NAME")
+hou_inc_black_merge <- merge(usa_pop_estimate, house_income_black, by = "NAME")
+hou_inc_asian_merge <- merge(usa_pop_estimate, house_income_asian, by = "NAME")
+hou_inc_hispanic_merge <- merge(usa_pop_estimate, house_income_hispanic, by = "NAME")
 
-house_income_total <- house_income_merge %>%
+house_income_all_total <- house_income_merge %>%
                       filter(variable=="TOTAL") %>%
                       select(NAME, estimate)
 
-house_income_merge <- merge(house_income_merge, house_income_total, by = "NAME")
+house_income_white_total <- hou_inc_white_merge %>%
+  filter(variable=="TOTAL") %>%
+  select(NAME, estimate)
+
+house_income_black_total <- hou_inc_black_merge %>%
+  filter(variable=="TOTAL") %>%
+  select(NAME, estimate)
+
+house_income_asian_total <- hou_inc_asian_merge %>%
+  filter(variable=="TOTAL") %>%
+  select(NAME, estimate)
+
+house_income_hispanic_total <- hou_inc_hispanic_merge %>%
+  filter(variable=="TOTAL") %>%
+  select(NAME, estimate)
+
+house_income_merge <- merge(house_income_merge, house_income_all_total, by = "NAME")
+hou_inc_white_merge <- merge(hou_inc_white_merge, house_income_black_total, by = "NAME")
+hou_inc_asian_merge <- merge(hou_inc_asian_merge, house_income_asian_total, by = "NAME")
+hou_inc_hispanic_merge <- merge(hou_inc_hispanic_merge, house_income_hispanic_total, by = "NAME")
+hou_inc_black_merge <- merge(hou_inc_black_merge, house_income_black_total, by = "NAME")
 
 house_income_percent <- house_income_merge %>%
                         mutate(estimate = ifelse(variable=="TOTAL",(estimate.x/POPESTIMATE2019)*100,(estimate.x/estimate.y)*100)) %>%
-                        select(NAME, GEOID, variable, estimate, moe, geometry)
+                        select(NAME, GEOID, variable, estimate, moe, geometry) %>%
+                        rename(estimate_all = estimate)                        
+
+house_income_white_percent <- hou_inc_white_merge %>%
+  mutate(estimate = ifelse(variable=="TOTAL",(estimate.x/POPESTIMATE2019)*100,(estimate.x/estimate.y)*100)) %>%
+  select(NAME, GEOID, variable, estimate, moe, geometry) %>%
+  rename(estimate_white = estimate)
+
+house_income_black_percent <- hou_inc_black_merge %>%
+  mutate(estimate = ifelse(variable=="TOTAL",(estimate.x/POPESTIMATE2019)*100,(estimate.x/estimate.y)*100)) %>%
+  select(NAME, GEOID, variable, estimate, moe, geometry) %>%
+  rename(estimate_black = estimate)
+
+house_income_asian_percent <- hou_inc_asian_merge %>%
+  mutate(estimate = ifelse(variable=="TOTAL",(estimate.x/POPESTIMATE2019)*100,(estimate.x/estimate.y)*100)) %>%
+  select(NAME, GEOID, variable, estimate, moe, geometry) %>%
+  rename(estimate_asian = estimate)
+
+house_income_hispanic_percent <- hou_inc_hispanic_merge %>%
+  mutate(estimate = ifelse(variable=="TOTAL",(estimate.x/POPESTIMATE2019)*100,(estimate.x/estimate.y)*100)) %>%
+  select(NAME, GEOID, variable, estimate, moe, geometry) %>%
+  rename(estimate_hispanic = estimate)
+
+
+house_income_by_race <- merge(house_income_percent, house_income_white_percent, by = c("NAME","variable")) %>%
+                        select (NAME, variable, estimate_all, estimate_white)
+house_income_by_race <- merge(house_income_by_race, house_income_black_percent, by = c("NAME","variable")) %>%
+  select (NAME, variable, estimate_all, estimate_white, estimate_black)
+
+
+house_income_by_race <- merge(house_income_by_race, house_income_asian_percent, by = c("NAME","variable")) %>%
+  select (NAME, variable, estimate_all, estimate_white, estimate_black, estimate_asian)
+
+house_income_by_race <- merge(house_income_by_race, house_income_hispanic_percent, by = c("NAME","variable")) %>%
+  select (NAME, variable, estimate_all, estimate_white, estimate_black, estimate_asian, estimate_hispanic)
+
+
 
 # usa_pop_percentage %>%
 #  augment(newdata = wine_test) %>%
