@@ -56,14 +56,14 @@ summary(variables)
 
 #---------------------------------------------------------------------------
 
-var1 <-  dplyr::filter(variables, grepl("INCOME",concept)) %>%
+var1 <-  dplyr::filter(variables, grepl("black",concept)) %>%
          group_by("label") 
 var_label <-  unique(var1["label"])
 var_concept <- unique(var1["concept"])var_list <- split(var_concept, seq(nrow(var_concept)))
 var_string <- toString(var_concept)
 writeLines(var_string)
 
-write.csv(var1, "census_data_income.csv")
+write.csv(variables, "census_data_income2.csv")
 
 vData <-  dplyr::filter(variables, grepl("B19001",name))
 write.csv(vData,"census_data.csv")        
@@ -96,6 +96,31 @@ house_income_all <- get_acs(geography = "state",
               geometry = TRUE,
               year = 2019) #%>%
        ## select(-moe)
+
+demo_race <- get_acs(geography = "state",
+                            variables = c(TOTAL = "B01001_001",
+                                          all_male = "B01001_002",
+                                          white_male = "B01001A_002",
+                                          black_male = "B01001B_002",
+                                          native_male = "B01001C_002",
+                                          asian_male = "B01001D_002",
+                                          pachi_male = "B01001E_002",
+                                          other_male = "B01001F_002",
+                                          hisp_male = "B01001I_002",
+                                          all_female = "B01001_026",
+                                          white_female = "B01001A_017",
+                                          black_female = "B01001B_017",
+                                          native_female = "B01001C_017",
+                                          asian_female = "B01001D_017",
+                                          pachi_female = "B01001E_017",
+                                          other_female = "B01001F_017",
+                                          hisp_male = "B01001I_017"),
+                            output = "tidy",
+                            geometry = TRUE,
+                            year = 2019) #%>%
+## select(-moe)
+st_write(demo_race, "demo_race.shp")
+
 
 house_income_white <- get_acs(geography = "state",
                             variables = c(TOTAL = "B19001_001",
