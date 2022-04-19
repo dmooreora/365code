@@ -75,4 +75,17 @@ ggplot(sim1, aes(x, y)) +
     data = filter(grid, rank(dist) <= 10)
   ) 
   
+ggplot(models, aes(a1, a2)) +
+  geom_point(
+    data = filter(models, rank(dist) <= 10),
+    size =4, color = "red"
+  ) +
+  geom_point(aes(colour = -dist))
+
+best <- optim(c(0, 0), measure_distance, data = sim1)
+best$par
+
+ggplot(sim1, aes(x, y)) +
+  geom_point(size = 2, )
+
 
